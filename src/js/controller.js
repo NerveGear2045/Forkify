@@ -1,24 +1,12 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
-import * as model from './model';
-import recipeView from './views/recipeView';
+import * as model from './model.js';
+import recipeView from './views/recipeView.js';
+import searchView from './views/searchView.js';
+import resultsView from './views/resultsView.js';
 
-const recipeContainer = document.querySelector('.recipe');
-
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
-
-// https://forkify-api.herokuapp.com/v2
-
-///////////////////////////////////////
-
-const controlRecipe = async () => {
+const controlRecipes = async () => {
   try {
     const id = window.location.hash.slice(1);
     if (!id) return;
@@ -29,13 +17,33 @@ const controlRecipe = async () => {
 
     // rendering
     recipeView.render(model.state.recipe);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    recipeView.renderError();
+  }
+};
+
+const controlSearchResults = async () => {
+  try {
+    resultsView.renderSpinner();
+
+    // get query
+    const query = searchView.getQuery();
+    if (!query) return;
+
+    // fetching data
+    await model.searchRecipe(query);
+
+    // rendering
+    resultsView.render(model.state.search.results);
+  } catch (error) {
+    console.log(resultsView.renderError);
+    resultsView.renderError();
   }
 };
 
 const init = () => {
-  recipeView.addHandlerRender(controlRecipe);
+  recipeView.addHandlerRender(controlRecipes);
+  searchView.addHandlerSearch(controlSearchResults);
 };
 
 init();
