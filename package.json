@@ -2,11 +2,11 @@
   "name": "forkify",
   "version": "1.0.0",
   "description": "recipe app",
-  "main": "controller.js",
+  "default": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html --dist-dir ./dist"
   },
   "author": "Long",
   "license": "ISC",
